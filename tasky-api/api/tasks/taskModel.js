@@ -3,13 +3,18 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const TaskSchema = new Schema({
-    title:  String,
+    title:  { type: String, required: true },
     description: String,
     deadline: Date,
         done: Boolean,
-        priority: {type: String, enum: ['low', 'medium', 'high']},
+        priority: { type: String, enum: ['low', 'medium', 'high'], required: true },
         created_at: Date,
         updated_at: Date
 });
+
+const dateValidator = (data) => {
+    return date > new Date();
+}
+TaskSchema.path("deadline").validate(dateValidator);
 
 export default mongoose.model('Task', TaskSchema);
