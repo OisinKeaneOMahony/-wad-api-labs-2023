@@ -9,10 +9,14 @@ const TaskSchema = new Schema({
         done: Boolean,
         priority: { type: String, enum: ['low', 'medium', 'high'], required: true },
         created_at: Date,
-        updated_at: Date
+        updated_at: Date,
+        userId: { 
+            type: Schema.Types.ObjectId, 
+            ref: 'User'
+        }
 });
 
-const dateValidator = (data) => {
+const dateValidator = (date) => {
     return date > new Date();
 }
 TaskSchema.path("deadline").validate(dateValidator);
