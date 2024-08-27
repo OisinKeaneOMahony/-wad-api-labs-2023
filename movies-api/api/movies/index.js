@@ -6,8 +6,22 @@ import { getUpcomingMovies } from '../tmdb-api';
 const router = express.Router();
 
 router.get('/', asyncHandler(async (req, res) => {
-    const movies = await movieModel.find();
-    res.status(200).json(movies);
+    let { page = 1, limit = 10 } = req.query;
+    [page, limit] = [+page, +limit];
+
+    const [total_results, results] = await Promise.all([
+        movieModel.estimatedDocumentCount(),
+        movieModel.find().limit(limit).skip((page - 1) * limit)
+    ]);
+    const total_pages = Math.ceil(total_results / limit);
+
+    const returnObject = {
+        page,
+        total_pages,
+        total_results,
+        results
+    };
+    res.status(200).json(returnObject);
 }));
 
 // Get movie details 
